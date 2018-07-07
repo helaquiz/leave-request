@@ -5,7 +5,9 @@ import { UserControlles } from '../controllers/user.controller';
 const router = express.Router();
 const userCtrl = new UserControlles();
 
-router.route('/user/login').post(userCtrl.login);
-router.route('/user/logout').post(userCtrl.logout);
+
+// /user/:route
+router.route('/login').post(userCtrl.login);
+router.route('/logout').post(userCtrl.logout);
 
 export { router }

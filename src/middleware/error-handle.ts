@@ -9,7 +9,6 @@ class ErrorHandle {
     }
 
     public static get ErrorInstance() {
-        // return new Server();
         return this.errorInstance || (this.errorInstance = new this());
     }
 
@@ -20,14 +19,36 @@ class ErrorHandle {
         errObj.url = req.originalUrl;
         console.log('ERROR PASSING THROUGH', err.message);
         // get the error stack
-        const stack = err.stack.split(/\n/).map((stackTrace: string) => stackTrace.replace(/\s{2,}/g, ' ').trim());
+        const stack = String(err.stack).split(/\n/).map((stackTrace: string) => stackTrace.replace(/\s{2,}/g, ' ').trim());
         // send out the error as json
-        res.status(500).json({
+        res.status(err.status || 500).json({
+            code: err.status || 500,
             api: err,
             url: req.originalUrl,
             error: err.message,
             stack,
         });
+    }
+
+    public InternalException(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const errObj: any = {}
+        const err: any = new Error('INTERNAL ERROR')
+        errObj.url = req.originalUrl;
+        console.log('ERROR PASSING THROUGH', err.message);
+        // get the error stack
+        const stack = err.stack.split(/\n/).map((stackTrace: string) => stackTrace.replace(/\s{2,}/g, ' ').trim());
+        // send out the error as json
+        res.status(404).json({
+            code: 404,
+            api: err,
+            url: req.originalUrl,
+            error: err.message,
+            stack,
+        });
+    }
+
+    public Logger(a: any, b: any, c: any, d: any) {
+        console.log(`hiii`, a, b, c, d)
     }
 }
 export { ErrorHandle }

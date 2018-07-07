@@ -28,7 +28,7 @@ class MysqlPoolConnector implements IMysqlPool {
         })
     }
 
-    getPool(): mysql.IPool {
+    private getPool(): mysql.IPool {
         return this.pool;
     }
     /**

@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as ini from "ini";
 import * as path from "path";
-import * as mongodb from 'mongodb';
 import { IMysqlConfig } from "./interfaces/mysql";
 /**
  * Configuration class for MySQL
@@ -27,16 +26,15 @@ class MysqlConfiguration implements IMysqlConfig {
  * Configuration class for Server
  */
 class Configuration {
+    // Instant
+    static _configInstance: Configuration
     // Server
     static serverTitle = 'AOT-Limousine Backoffice Server';
     static serverPort = 80;
     // MySQL
     static mysqlConfig: IMysqlConfig;
-    // MongoDB
-    static mongoUrl: string;
-    static mongoOptions: mongodb.MongoClientOptions;
 
-    constructor(private env: string) {
+    private constructor(private env: string) {
         switch (env) {
             case 'production':
                 this.loadConfiguration(env, './config.ini');
@@ -54,6 +52,15 @@ class Configuration {
                 console.log('Configuration mode: undefined');
                 process.exit(1);
         }
+    }
+
+    static getConfigInstance(env: string) {
+        if (!Configuration._configInstance) {
+            Configuration._configInstance = new Configuration(env);
+        } else {
+            console.log(`else`)
+        }
+        return Configuration._configInstance
     }
     /**
      * Set configuration for Production mode
@@ -76,9 +83,6 @@ class Configuration {
         Configuration.mysqlConfig.waitForConnections = config.mysql.waitForConnections;
         Configuration.mysqlConfig.connectionLimit = Number(config.mysql.connectionLimit);
         Configuration.mysqlConfig.queueLimit = Number(config.mysql.queueLimit);
-        // MongoDB
-        Configuration.mongoUrl = config.mongo.mongourl;
-        Configuration.mongoOptions;
     }
 
     copyFolder(srcPath: string, destPath: string) {

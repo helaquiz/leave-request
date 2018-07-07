@@ -13,50 +13,45 @@ import * as morgan from 'morgan';
 import * as errorHandler from 'errorhandler';
 
 import { Configuration } from './config';
-import { MongoDbClient } from './libs/mongo-connector';
+import { DAL } from './data-accesss/DAL';
 
-import * as route from './routes/ROUTES';
+import * as ROUTER from './routes/ROUTES';
 
 import { ErrorHandle } from './middleware/error-handle'
 
 export class Server {
     private static _serverInstance: Server
-    public server: express.Application
-    public config: Configuration
+    private server: express.Application
+    private config: Configuration
+    private DAL: DAL
 
     private constructor(env: string = 'local') {
-        this.config = new Configuration(env);
+        this.config = Configuration.getConfigInstance(env);
         this.server = express();
-        this._config();
-        this._route();
+        this.DAL = DAL.getDALInstance();
         this._init();
     }
 
-    public static get ServerInstance() {
-        // return new Server();
-        return this._serverInstance || (this._serverInstance = new this());
+    public static getServerInstance() {
+        if (!Server._serverInstance) {
+            Server._serverInstance = new Server();
+        } else {
+        }
+        return Server._serverInstance
     }
 
-    private _config() {
+    private _enableOps() {
         this.server.disable('etag');
         this.server.use(cors());
         this.server.use(bodyParser.json({ limit: '10mb' }));
-        // this.server.use(methodOverride(function (req, res) {
-        //     console.log(`override`)
-        //     let customdata = req.body
-        //     req.body.data = `1111`
-        //     var method = req.body.method
-        //     delete req.body.method
-        //     return method;
-        // }));
         this.server.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
         if (env === 'development' || env === 'qa') {
             this.server.use(morgan('common'));
-            this.server.use(errorHandler());
+            this.server.use(errorHandler({ log: ErrorHandle.ErrorInstance.Logger }));
         } else if (env === 'local') {
             this.server.use(morgan('common'));
-            this.server.use(errorHandler());
+            this.server.use(errorHandler({ log: ErrorHandle.ErrorInstance.Logger }));
         } else {
             this.server.use(morgan('combined'));
         }
@@ -64,15 +59,15 @@ export class Server {
 
     private _route() {
         // Route
-        this.server.use(route.testRoute);
-        this.server.use(route.userRoute);
+        this.server.use(ROUTER);
         let errorHandle = ErrorHandle.ErrorInstance
         this.server.use(errorHandle.NotFoundException)
+        // DAL
     }
 
     private _init() {
         if (cluster.isMaster) {
-            console.log(`=========================================================================================`);
+            console.log(`========================================================================================`);
             console.log('Node env: ' + env);
             console.log(`Configuration Suite: ${env}`);
             console.log(`${Configuration.serverTitle} Server start listening on port : ${Configuration.serverPort}`);
@@ -84,18 +79,13 @@ export class Server {
             });
             this.config.copyFolder('./template', '../build');
         } else {
+            this._enableOps();
+            this._route();
             this.server.listen(Configuration.serverPort, function () {
-                // database.connect('mysql','mongodb','redis','firebase');
                 console.log(`=========================Worker ${process.pid} started===================================`);
-                MongoDbClient.connect(Configuration.mongoUrl, Configuration.mongoOptions, (err) => {
-                    if (err) {
-                        console.error(err);
-                        process.exit(1); // exit with failure
-                    }
-                });
             });
         }
     }
 }
 
-let server = Server.ServerInstance;
+let server = Server.getServerInstance();
