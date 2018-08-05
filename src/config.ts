@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as ini from "ini";
 import * as path from "path";
-import { IMysqlConfig } from "./interfaces/mysql";
+import { IMysqlConfig } from "./interfaces/mysql-interface";
 /**
  * Configuration class for MySQL
  */
@@ -33,6 +33,10 @@ class Configuration {
     static serverPort = 80;
     // MySQL
     static mysqlConfig: IMysqlConfig;
+
+    // Other Configuration
+    static version1: string = ''
+    static secretKey: string = ''
 
     private constructor(private env: string) {
         switch (env) {
@@ -83,6 +87,10 @@ class Configuration {
         Configuration.mysqlConfig.waitForConnections = config.mysql.waitForConnections;
         Configuration.mysqlConfig.connectionLimit = Number(config.mysql.connectionLimit);
         Configuration.mysqlConfig.queueLimit = Number(config.mysql.queueLimit);
+
+        // Other 
+        Configuration.secretKey = config.key.secretKey;
+        Configuration.version1 = config.apiVersion.v1;
     }
 
     copyFolder(srcPath: string, destPath: string) {

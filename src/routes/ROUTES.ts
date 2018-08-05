@@ -1,6 +1,6 @@
-// export { router as testRoute } from './test.route';
-// export { router as userRoute } from './user.route';
-import * as express from "express";
+import { verifyToken } from '../middleware/verify-jwt';
+
+import * as express from 'express';
 
 // import sub-routers
 import { router as testRoute } from "./test.route";

@@ -1,3 +1,4 @@
+import { MysqlError, Connection } from 'mysql';
 export interface IMysqlConfig {
     host: string;
     port: number
@@ -15,8 +16,9 @@ export interface IMysqlConfig {
 }
 
 export interface IMysqlPool {
-    exec(query: string, data: any, callback: (err: any, res?: any) => void): void;
+    exec(query: string, data: any, callback: (err: MysqlError, res?: any) => void): void;
     close(): void;
     escape(string: string): string;
-    startTransaction(callback: (err: any, connection?: any) => void): void;
+    getConnetion(callback: (err: MysqlError, connection?: any) => void): void;
+    rollback(connection: Connection, err: MysqlError, callback: (error: MysqlError) => void): void;
 }

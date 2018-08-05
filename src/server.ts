@@ -11,6 +11,8 @@ import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as morgan from 'morgan';
 import * as errorHandler from 'errorhandler';
+import * as exjwt from 'express-jwt';
+
 
 import { Configuration } from './config';
 import { DAL } from './data-accesss/DAL';
@@ -18,6 +20,7 @@ import { DAL } from './data-accesss/DAL';
 import * as ROUTER from './routes/ROUTES';
 
 import { ErrorHandle } from './middleware/error-handle'
+import { enableExjwt } from './middleware/express-jwt';
 
 export class Server {
     private static _serverInstance: Server
@@ -55,36 +58,41 @@ export class Server {
         } else {
             this.server.use(morgan('combined'));
         }
+
     }
 
     private _route() {
         // Route
-        this.server.use(ROUTER);
-        let errorHandle = ErrorHandle.ErrorInstance
-        this.server.use(errorHandle.NotFoundException)
+        let errorHandle = ErrorHandle.ErrorInstance;
+        this.server.use('/api', enableExjwt(Configuration.secretKey));
+        this.server.use(Configuration.version1, ROUTER);
+        this.server.use(errorHandle.NotFoundException);
+        this.server.use(errorHandle.CatchException);
         // DAL
     }
 
     private _init() {
-        if (cluster.isMaster) {
-            console.log(`========================================================================================`);
-            console.log('Node env: ' + env);
-            console.log(`Configuration Suite: ${env}`);
-            console.log(`${Configuration.serverTitle} Server start listening on port : ${Configuration.serverPort}`);
-            for (let i = 0; i < 2; i++) {
-                cluster.fork();
-            }
-            cluster.on('exit', (worker, code, signal) => {
-                console.log(`worker ${worker.process.pid} died`);
-            });
-            this.config.copyFolder('./template', '../build');
-        } else {
-            this._enableOps();
-            this._route();
-            this.server.listen(Configuration.serverPort, function () {
-                console.log(`=========================Worker ${process.pid} started===================================`);
-            });
-        }
+        // if (cluster.isMaster) {
+        console.log(`========================================================================================`);
+        console.log('Node env: ' + env);
+        console.log(`Configuration Suite: ${env}`);
+        console.log(`${Configuration.serverTitle} Server start listening on port : ${Configuration.serverPort}`);
+        // for (let i = 0; i < 2; i++) {
+        //     cluster.fork();
+        // }
+        // cluster.on('exit', (worker, code, signal) => {
+        //     console.log(`worker ${worker.process.pid} died`);
+        // });
+        // this.config.copyFolder('./template', '../build');
+        // } else {
+        this._enableOps();
+        this._route();
+
+        this.server.listen(Configuration.serverPort, () => {
+
+            console.log(`=========================Worker ${process.pid} started===================================`);
+        });
+        // }
     }
 }
 

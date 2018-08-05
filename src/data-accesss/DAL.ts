@@ -17,10 +17,8 @@ export class DAL {
 
   static getDALInstance() {
     if (!DAL._DALInstance) {
-      console.log(`iff`)
       DAL._DALInstance = new DAL();
     } else {
-      console.log(`elsss`)
     }
     return DAL._DALInstance
   }

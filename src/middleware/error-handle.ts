@@ -12,6 +12,18 @@ class ErrorHandle {
         return this.errorInstance || (this.errorInstance = new this());
     }
 
+
+    // catch Error
+    public CatchException(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
+        console.log(err);
+        if (err.name === 'UnauthorizedError') {
+            return res.status(err.status).send({ code: err.status, message: err.message });
+            // logger.error(err);
+        } else {
+            next();
+        }
+    }
+
     // catch 404
     public NotFoundException(req: express.Request, res: express.Response, next: express.NextFunction) {
         const errObj: any = {}
@@ -21,8 +33,8 @@ class ErrorHandle {
         // get the error stack
         const stack = String(err.stack).split(/\n/).map((stackTrace: string) => stackTrace.replace(/\s{2,}/g, ' ').trim());
         // send out the error as json
-        res.status(err.status || 500).json({
-            code: err.status || 500,
+        res.status(err.status || 404).json({
+            code: err.status || 404,
             api: err,
             url: req.originalUrl,
             error: err.message,
@@ -38,8 +50,8 @@ class ErrorHandle {
         // get the error stack
         const stack = err.stack.split(/\n/).map((stackTrace: string) => stackTrace.replace(/\s{2,}/g, ' ').trim());
         // send out the error as json
-        res.status(404).json({
-            code: 404,
+        res.status(500).json({
+            code: 500,
             api: err,
             url: req.originalUrl,
             error: err.message,

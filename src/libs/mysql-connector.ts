@@ -1,11 +1,12 @@
 // MySQL Connector here manages connection as 'Pool'
 
 import * as mysql from "mysql";
-import { IMysqlConfig, IMysqlPool } from "../interfaces/mysql";
+import { IMysqlConfig, IMysqlPool } from "../interfaces/mysql-interface";
+
 
 
 class MysqlPoolConnector implements IMysqlPool {
-    pool: mysql.IPool;
+    pool: mysql.Pool;
     constructor(private config: IMysqlConfig) {
         this.pool = mysql.createPool({
             host: this.config.host,
@@ -19,16 +20,16 @@ class MysqlPoolConnector implements IMysqlPool {
             queueLimit: this.config.queueLimit
         });
 
-        this.exec(`SELECT now()`, null, (err, result) => {
+        this.exec(`SELECT now() as time`, null, (err, result) => {
             if (err) {
                 console.log(err);
             } else {
-                console.log(result);
+                console.log(`Connect MySQL at : ${result[0].time}`);
             }
         })
     }
 
-    private getPool(): mysql.IPool {
+    getPool(): mysql.Pool {
         return this.pool;
     }
     /**
@@ -69,7 +70,7 @@ class MysqlPoolConnector implements IMysqlPool {
         return mysql.escape(string)
     }
 
-    startTransaction(callback: (err: any, connection?: any) => void): void {
+    getConnetion(callback: (err: any, connection?: any) => void): void {
         this.getPool().getConnection((err, connection: any) => {
             if (err) {
                 if (connection) connection.release();
@@ -77,6 +78,13 @@ class MysqlPoolConnector implements IMysqlPool {
             }
             return callback(err, connection);
         });
+    }
+
+    rollback(connection: mysql.PoolConnection, err: mysql.MysqlError, callback: (error: any) => void): void {
+        connection.rollback(function () {
+            connection.release();
+            return callback(err);
+        })
     }
 
 }
