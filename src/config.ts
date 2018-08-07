@@ -29,7 +29,7 @@ class Configuration {
     // Instant
     static _configInstance: Configuration
     // Server
-    static serverTitle = 'AOT-Limousine Backoffice Server';
+    static serverTitle = 'Leave Request Server';
     static serverPort = 80;
     // MySQL
     static mysqlConfig: IMysqlConfig;
