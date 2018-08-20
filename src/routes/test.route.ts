@@ -7,5 +7,4 @@ const testCtrl = new TestControlles();
 
 router.route('/').get(testCtrl.test);
 
-
 export { router }

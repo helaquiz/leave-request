@@ -10,7 +10,7 @@ const userCtrl = new UserControlles();
 // /user/:route
 router.route('/login').post(userCtrl.login);
 router.route('/logout').post(userCtrl.logout);
-router.route('/leave').post(verifyToken, userCtrl.leaveRequest);
-router.route('/information').post(userCtrl.userDetail);
+router.route('/leave').get(verifyToken, userCtrl.leaveList).post(verifyToken, userCtrl.leaveRequest);
+router.route('/information').get(userCtrl.getUserDetail).post(verifyToken, userCtrl.editUserDetail);
 
 export { router }

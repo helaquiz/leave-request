@@ -8,3 +8,5 @@ typings.*
 build/*
 
 package-lock*
+
+uploads/*

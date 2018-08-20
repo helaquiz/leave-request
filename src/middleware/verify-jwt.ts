@@ -9,6 +9,7 @@ import { Configuration } from '../config';
 export async function verifyToken(req: express.Request, res: express.Response, next: express.NextFunction) {
     try {
         console.log(`user`, req.user.username)
+        console.log(`Worker ${process.pid} : ${req.url}`)
         const result = await DAL.userDAL().VerifyToken(req.user);
         if (result) {
             next();

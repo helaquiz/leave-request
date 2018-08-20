@@ -1,13 +1,15 @@
 import * as express from 'express';
 import { ErrorHandle } from '../middleware/error-handle';
+const router = express.Router();
 
-class TestControlles {
+
+class ReportControllers {
     test(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
             console.log(`Worker ${process.pid} : ${req.url}`)
-            // throw "Internal";
+            throw "Internal";
             
-            return res.json({ code: 1, message: `OK` });
+            // return res.json({ code: 1, message: `OK` });
         } catch (err) {
             // console.log(err)
             return ErrorHandle.ErrorInstance.InternalException(req, res, next)
@@ -17,4 +19,4 @@ class TestControlles {
 
 }
 
-export { TestControlles }
+export { ReportControllers }

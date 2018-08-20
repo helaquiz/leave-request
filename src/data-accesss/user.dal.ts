@@ -1,8 +1,8 @@
 
-import * as crypto from 'crypto';
+// import * as crypto from 'crypto';
+const crypto = require('crypto');
 
 import { MysqlPoolConnector } from "../libs/mysql-connector";
-import { PoolConnection } from "mysql";
 
 class UserDAL {
 
@@ -35,29 +35,17 @@ class UserDAL {
                   LEFT JOIN department dpmt ON emp.department_id = dpmt.department_id
           WHERE username = ? AND password = ?`
       this.db.exec(sqlcmd, [params.username, params.password], (err, result) => {
-        if (result.length) {
-          resolve(result[0]);
-        } else {
-          resolve(false)
-        }
-      })
-    })
-  }
-
-  LeaveRequest(params: any) {
-    return new Promise((resolve, reject) => {
-      const sqlcmd = `INSERT INTO leave_logs SET ?`
-      this.db.exec(sqlcmd, params, (err, result) => {
         if (err) {
           let errmessage = err.message ? err.message : null;
           let errno = err.errno ? err.errno : null;
           console.log(`${errmessage} , Error number :${errno}`)
           return reject({ _isSuccess: false, code: errno, message: errmessage })
         }
-        if (result) {
-          resolve(true);
+        console.log(result);
+        if (result.length) {
+          return resolve(result[0]);
         } else {
-          resolve(false)
+          return resolve(false)
         }
       })
     })
@@ -67,6 +55,12 @@ class UserDAL {
     return new Promise((resolve, reject) => {
       const sqlcmd = `SELECT * FROM user WHERE username = ? AND access_token = ?`
       this.db.exec(sqlcmd, [params.username, params.access_token], (err, result) => {
+        if (err) {
+          let errmessage = err.message ? err.message : null;
+          let errno = err.errno ? err.errno : null;
+          console.log(`${errmessage} , Error number :${errno}`)
+          return reject({ _isSuccess: false, code: errno, message: errmessage })
+        }
         if (result.length === 1) {
           resolve(true);
         } else {
@@ -81,6 +75,12 @@ class UserDAL {
       const accessToken = crypto.randomBytes(15).toString('hex').substring(10, 25);
       const sqlcmd = `UPDATE user SET access_token = ? WHERE username = ?`
       this.db.exec(sqlcmd, [accessToken, username], (err, result) => {
+        if (err) {
+          let errmessage = err.message ? err.message : null;
+          let errno = err.errno ? err.errno : null;
+          console.log(`${errmessage} , Error number :${errno}`)
+          return reject({ _isSuccess: false, code: errno, message: errmessage })
+        }
         if (result.changedRows === 1) {
           resolve(accessToken);
         } else {
@@ -91,6 +91,26 @@ class UserDAL {
 
     })
   }
+
+  getEmpIdFromEmpCode(empCode: string) {
+    return new Promise((resolve, reject) => {
+      const sqlcmd = `SELECT emp_id FROM employee WHERE emp_code = ?`
+      this.db.exec(sqlcmd, empCode, (err, result) => {
+        if (err) {
+          let errmessage = err.message ? err.message : null;
+          let errno = err.errno ? err.errno : null;
+          console.log(`${errmessage} , Error number :${errno}`)
+          return reject({ _isSuccess: false, code: errno, message: errmessage })
+        }
+        if (result.length === 1) {
+          resolve(result[0].emp_id);
+        } else {
+          resolve(false)
+        }
+      })
+    });
+  }
+
 
 }
 

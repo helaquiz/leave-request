@@ -27,6 +27,6 @@ export function enableExjwt(key: string) {
             }
         }
     }).unless({
-        path: ['/api/v1/user/login', '/api/v1/user/refreshtoken', '/api/v1/test/']
+        path: ['/api/v1/user/login', '/api/v1/user/refreshtoken', '/api/v1/test', '/api/v1/test/']
     });
 }
