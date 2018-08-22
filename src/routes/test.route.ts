@@ -1,9 +1,9 @@
 import * as express from 'express';
 
-import { TestControlles } from '../controllers/test.controller';
+import { TestController } from '../controllers/test.controller';
 
 const router = express.Router();
-const testCtrl = new TestControlles();
+const testCtrl = new TestController();
 
 router.route('/').get(testCtrl.test);
 

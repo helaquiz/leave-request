@@ -1,10 +1,10 @@
 import * as express from 'express';
 
 import { verifyToken } from '../middleware/verify-jwt';
-import { ReportControllers } from '../controllers/report.controller';
+import { ReportController } from '../controllers/report.controller';
 
 const router = express.Router();
-const reportCtrl = new ReportControllers();
+const reportCtrl = new ReportController();
 
 
 // /report/:route

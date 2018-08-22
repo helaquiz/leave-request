@@ -1,7 +1,7 @@
 import * as express from 'express';
 import { ErrorHandle } from '../middleware/error-handle';
 
-class TestControlles {
+class TestController {
     test(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
             console.log(`Worker ${process.pid} : ${req.url}`)
@@ -17,4 +17,4 @@ class TestControlles {
 
 }
 
-export { TestControlles }
+export { TestController }

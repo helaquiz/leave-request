@@ -16,6 +16,7 @@ export class DAL {
     this.db = new MysqlPoolConnector(Configuration.mysqlConfig);
     this._userDAL = UserDAL.UserDALInstance(this.db);
     this._leaveDAL = LeaveDAL.LeaveDALInstance(this.db);
+
   }
 
   static getDALInstance() {

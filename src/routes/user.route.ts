@@ -1,10 +1,10 @@
 import * as express from 'express';
 
-import { UserControlles } from '../controllers/user.controller';
+import { UserController } from '../controllers/user.controller';
 import { verifyToken } from '../middleware/verify-jwt';
 
 const router = express.Router();
-const userCtrl = new UserControlles();
+const userCtrl = new UserController();
 
 
 // /user/:route

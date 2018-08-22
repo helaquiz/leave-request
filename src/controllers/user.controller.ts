@@ -8,7 +8,7 @@ import { upload } from '../libs/file-upload';
 import { ErrorHandle } from '../middleware/error-handle';
 
 
-class UserControlles {
+class UserController {
 
     async login(req: express.Request, res: express.Response, next: express.NextFunction) {
         try {
@@ -121,4 +121,4 @@ class UserControlles {
 
 }
 
-export { UserControlles }
+export { UserController }
