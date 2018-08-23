@@ -8,9 +8,15 @@ const userCtrl = new UserController();
 
 
 // /user/:route
-router.route('/login').post(userCtrl.login);
-router.route('/logout').post(userCtrl.logout);
-router.route('/leave').get(verifyToken, userCtrl.leaveList).post(verifyToken, userCtrl.leaveRequest);
-router.route('/information').get(userCtrl.getUserDetail).post(verifyToken, userCtrl.editUserDetail);
+router.route('/login')
+  .post(userCtrl.login);
+router.route('/logout')
+  .post(userCtrl.logout);
+router.route('/leave')
+  .get(verifyToken, userCtrl.leaveList)
+  .post(verifyToken, userCtrl.leaveRequest);
+router.route('/information')
+  .get(userCtrl.getUserDetail)
+  .put(verifyToken, userCtrl.editUserDetail);
 
 export { router }

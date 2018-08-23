@@ -1,4 +1,5 @@
 // import * as _ from 'lodash'
+import * as express from 'express';
 import { DAL } from '../data-accesss/DAL'
 import * as crypto from "crypto"
 import * as dateHelper from "./date-helper";
@@ -44,4 +45,12 @@ export function simpleStringify(object: any) {
 
 export function toJson(data: JSON) {
     return JSON.stringify(data, null, 2);
+}
+
+export function Pagination(req: express.Request) {
+    const pagination = {
+        page: req.query.page ? Number(req.query.page) : 1,
+        limit: req.query.limit ? Number(req.query.limit) : 20
+    }
+    return pagination;
 }
